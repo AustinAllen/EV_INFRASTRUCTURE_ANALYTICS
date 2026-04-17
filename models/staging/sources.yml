@@ -1,0 +1,10 @@
+version: 2
+
+sources:
+  - name: raw
+    database: EV_INFRASTRUCTURE_ANALYTICS
+    schema: RAW
+
+    tables:
+      - name: MOTOR_VEHICLE_REGISTER
+      - name: EV_CHARGING_STATIONS_RAW
