@@ -8,3 +8,4 @@ sources:
     tables:
       - name: MOTOR_VEHICLE_REGISTER
       - name: EV_CHARGING_STATIONS_RAW
+      - name: TLA_BOUNDARIES
