@@ -8,45 +8,45 @@ with source as (
 renamed as (
 
     select
-        "c1"::number as vehicle_id,
-        "c2" as alternative_motive_power,
-        "c3" as colour,
-        "c4" as body_type,
-        "c5"::number as engine_cc,
-        "c6" as chassis7,
-        "c7" as vehicle_class,
-        "c8" as engine_number,
-        "c9"::number as first_registration_year,
-        "c10"::number as first_registration_month,
-        "c11"::number as gross_vehicle_mass,
-        "c12"::number as height,
-        "c13" as import_status,
-        "c14" as industry_class,
-        "c15" as industry_model_code,
-        "c16" as make,
-        "c17" as model,
-        "c18" as motive_power,
-        "c19" as mvma_model_code,
-        "c20"::number as number_of_axles,
-        "c21"::number as number_of_seats,
-        "c22" as nz_assembled,
-        "c23" as original_country,
-        "c24"::number as power_rating,
-        "c25" as previous_country,
-        "c26" as road_transport_code,
-        "c27" as submodel,
-        "c28" as tla,
-        "c29" as transmission_type,
-        "c30"::number as vdam_weight,
-        "c31" as vehicle_type,
-        "c32" as vehicle_usage,
-        "c33"::number as vehicle_year,
-        "c34" as vin11,
-        "c35"::number as width,
-        "c36" as synthetic_greenhouse_gas,
-        "c37"::float as fc_combined,
-        "c38"::float as fc_urban,
-        "c39"::float as fc_extra_urban
+        "OBJECTID"::number as vehicle_id,
+        "ALTERNATIVE_MOTIVE_POWER" as alternative_motive_power,
+        "BASIC_COLOUR" as colour,
+        "BODY_TYPE" as body_type,
+        "CC_RATING"::number as engine_cc,
+        "CHASSIS7" as chassis7,
+        "CLASS" as vehicle_class,
+        "ENGINE_NUMBER" as engine_number,
+        "FIRST_NZ_REGISTRATION_YEAR"::number as first_registration_year,
+        "FIRST_NZ_REGISTRATION_MONTH"::number as first_registration_month,
+        "GROSS_VEHICLE_MASS"::number as gross_vehicle_mass,
+        "HEIGHT"::number as height,
+        "IMPORT_STATUS" as import_status,
+        "INDUSTRY_CLASS" as industry_class,
+        "INDUSTRY_MODEL_CODE" as industry_model_code,
+        "MAKE" as make,
+        "MODEL" as model,
+        "MOTIVE_POWER" as motive_power,
+        "MVMA_MODEL_CODE" as mvma_model_code,
+        "NUMBER_OF_AXLES"::number as number_of_axles,
+        "NUMBER_OF_SEATS"::number as number_of_seats,
+        "NZ_ASSEMBLED" as nz_assembled,
+        "ORIGINAL_COUNTRY" as original_country,
+        "POWER_RATING"::number as power_rating,
+        "PREVIOUS_COUNTRY" as previous_country,
+        "ROAD_TRANSPORT_CODE" as road_transport_code,
+        "SUBMODEL" as submodel,
+        "TLA" as tla,
+        "TRANSMISSION_TYPE" as transmission_type,
+        "VDAM_WEIGHT"::number as vdam_weight,
+        "VEHICLE_TYPE" as vehicle_type,
+        "VEHICLE_USAGE" as vehicle_usage,
+        "VEHICLE_YEAR"::number as vehicle_year,
+        "VIN11" as vin11,
+        "WIDTH"::number as width,
+        "SYNTHETIC_GREENHOUSE_GAS" as synthetic_greenhouse_gas,
+        "FC_COMBINED"::float as fc_combined,
+        "FC_URBAN"::float as fc_urban,
+        "FC_EXTRA_URBAN"::float as fc_extra_urban
 
     from source
 
@@ -77,7 +77,33 @@ cleaned as (
 
         upper(trim(make)) as make,
         upper(trim(model)) as model,
-        upper(trim(motive_power)) as motive_power,
+        CASE
+            -- PURE ELECTRIC (core)
+            WHEN upper(trim(motive_power)) LIKE '%ELECTRIC%' 
+            AND upper(trim(motive_power)) NOT LIKE '%HYBRID%' 
+            THEN 'BEV'
+
+            -- RANGE EXTENDED (still charging dependent)
+            WHEN upper(trim(motive_power)) LIKE '%ELECTRIC%EXTENDED%' 
+                THEN 'BEV'
+
+            -- PLUG-IN HYBRID
+            WHEN upper(trim(motive_power)) LIKE '%PLUGIN%' 
+            OR upper(trim(motive_power)) LIKE '%PLUG-IN%' 
+            THEN 'PHEV'
+
+            -- HYBRID (non-charging)
+            WHEN upper(trim(motive_power)) LIKE '%HYBRID%' 
+            THEN 'HEV'
+
+            -- FUEL CELL (edge case)
+            WHEN upper(trim(motive_power)) LIKE '%FUEL CELL%' 
+            THEN 'FCEV'
+
+            WHEN upper(trim(motive_power)) IS NULL THEN 'UNKNOWN'
+
+            ELSE 'OTHER'
+        END AS motive_power,
         mvma_model_code,
 
         number_of_axles,

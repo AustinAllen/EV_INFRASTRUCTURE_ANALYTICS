@@ -46,7 +46,7 @@ full join {{ ref('int_chargers_by_tla') }} c
 group by 1
 #}
 
-with latest_ev as (
+{#with latest_ev as (
     select *
     from {{ ref('int_ev_demand_by_tla') }}
     where year = (select max(year) from {{ ref('int_ev_demand_by_tla') }})
@@ -77,7 +77,7 @@ select
 from latest_ev e
 full join latest_chargers c
     on e.tla_code = c.tla_code
-
+#}
 {#select
     coalesce(e.tla_code, c.tla_code) as tla_code,
 
@@ -105,3 +105,68 @@ full join {{ ref('int_chargers_by_tla') }} c
 group by 1
 #}
 
+with ev as (
+
+    -- cumulative EVs across all years (fleet size)
+    select
+        tla_code,
+
+        SUM(case when motive_power = 'BEV' then ev_count else 0 end) as bev_count,
+        SUM(case when motive_power = 'PHEV' then ev_count else 0 end) as phev_count,
+        SUM(case when motive_power in ('BEV','PHEV') then ev_count else 0 end) as total_ev
+
+    from {{ ref('int_ev_demand_by_tla') }}
+    group by 1
+
+),
+
+latest_year as (
+
+    -- get latest year for chargers
+    select max(year) as year
+    from {{ ref('int_chargers_by_tla') }}
+
+),
+
+chargers as (
+
+    select
+        tla_code,
+        SUM(station_count) as station_count,
+        SUM(connector_count) as connector_count
+
+    from {{ ref('int_chargers_by_tla') }}
+    group by 1
+
+),
+
+final as (
+
+    select
+        coalesce(e.tla_code, c.tla_code) as tla_code,
+
+        -- EV metrics
+        e.bev_count,
+        e.phev_count,
+        e.total_ev,
+
+        -- Charger metrics
+        c.station_count,
+        c.connector_count,
+
+        -- Ratios (core KPIs)
+        case when c.station_count > 0 
+            then e.total_ev::float / c.station_count 
+        end as evs_per_station,
+
+        case when c.connector_count > 0 
+            then e.total_ev::float / c.connector_count 
+        end as evs_per_connector
+
+    from ev e
+    full join chargers c
+        on e.tla_code = c.tla_code
+
+)
+
+select * from final

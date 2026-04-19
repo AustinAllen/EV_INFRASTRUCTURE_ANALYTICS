@@ -67,6 +67,17 @@ cleaned as (
         latitude,
         longitude,
 
+        {#CASE 
+            WHEN latitude IS NOT NULL AND longitude IS NOT NULL
+            THEN TO_GEOGRAPHY(
+                'POINT(' || 
+                CASE 
+                    WHEN longitude BETWEEN 60 AND 80 THEN longitude + 100
+                    ELSE longitude
+                END
+                || ' ' || latitude || ')'
+            )
+        END AS location,#}
         -- geography column (important!)
         case 
             when latitude is not null and longitude is not null
