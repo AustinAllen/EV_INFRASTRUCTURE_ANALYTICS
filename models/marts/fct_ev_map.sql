@@ -15,9 +15,11 @@ tla as (
 )
 
 select
-    b.tla_code,
+    upper(trim(b.tla_code)) as tla_code,
     b.year,
-    b.ev_count,
+    b.bev_count,
+    b.phev_count,
+    b.total_ev,
     b.station_count,
     b.connector_count,
     b.evs_per_connector,

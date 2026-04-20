@@ -30,3 +30,17 @@ models:
       - name: station_count
         tests:
           - not_null
+
+  - name: int_ev_per_capita
+    description: "ev aggreate by population"
+    columns:
+      - name: tla_code
+        tests:
+          - not_null
+
+  - name: int_business_zone_classification
+    description: "business_zone"
+    columns:
+      - name: tla_code
+        tests:
+          - not_null

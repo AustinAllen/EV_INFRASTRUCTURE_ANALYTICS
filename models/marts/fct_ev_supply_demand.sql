@@ -105,6 +105,9 @@ full join {{ ref('int_chargers_by_tla') }} c
 group by 1
 #}
 
+
+
+
 with ev as (
 
     -- cumulative EVs across all years (fleet size)
@@ -144,12 +147,11 @@ final as (
 
     select
         coalesce(e.tla_code, c.tla_code) as tla_code,
-
+        (select year from latest_year) as year,
         -- EV metrics
         e.bev_count,
         e.phev_count,
         e.total_ev,
-
         -- Charger metrics
         c.station_count,
         c.connector_count,
@@ -170,3 +172,5 @@ final as (
 )
 
 select * from final
+
+
