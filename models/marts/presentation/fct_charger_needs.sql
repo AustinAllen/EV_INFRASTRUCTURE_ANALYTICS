@@ -22,13 +22,13 @@ final as (
         e.year,
         e.ev_count,
 
-        -- ✅ demand (this should grow!)
+        -- demand (this should grow!)
         e.ev_count / 40.0 as required_chargers,
 
-        -- ✅ ONLY historical actual chargers
+        -- ONLY historical actual chargers
         c.actual_chargers,
 
-        -- ✅ target ONLY from 2023 → 2030
+        -- target ONLY from 2023 → 2030
         case
             when e.year < 2023 then null
             else

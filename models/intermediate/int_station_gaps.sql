@@ -42,7 +42,7 @@ paired as (
 
 ),
 
--- 🔥 structure for Tableau (Path)
+-------- structure for Tableau (Path)
 expanded as (
 
     select
@@ -69,7 +69,7 @@ expanded as (
 
 ),
 
--- 🔥 compute distance
+---------------- compute distance
 distance_calc as (
 
     select
@@ -89,7 +89,7 @@ distance_calc as (
 
 ),
 
--- 🔥 rank gaps
+------ rank gaps
 ranked as (
 
     select
@@ -99,7 +99,7 @@ ranked as (
 
 )
 
--- 🔥 FINAL OUTPUT (THIS IS THE FIX)
+------------ FINAL OUTPUT (THIS IS THE FIX)
 select
     e.tla_code,
     e.site_a,

@@ -57,7 +57,7 @@ nearest_only as (
 
 ranked as (
 
-    -- 🔥 GLOBAL ranking (important)
+    -- -------GLOBAL ranking (important)
     select
         *,
         rank() over (order by distance_km desc) as gap_rank

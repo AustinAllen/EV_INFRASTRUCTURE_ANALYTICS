@@ -11,5 +11,5 @@ select
     b.total_ev::float / nullif(c.station_count, 0) as evs_per_station
 
 from {{ ref('int_business_zone_classification') }} b
-left join {{ ref('int_chargers_by_tla') }} c
+left join {{ ref('int_chargers_by_tla_latest') }} c
     on b.tla_code = c.tla_code

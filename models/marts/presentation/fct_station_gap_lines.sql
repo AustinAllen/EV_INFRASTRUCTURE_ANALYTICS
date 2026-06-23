@@ -146,7 +146,7 @@ pairs as (
 
 nearest as (
 
-    -- 🔥 ONLY keep nearest neighbor per station
+    -- ONLY keep nearest neighbor per station
     select
         *,
         row_number() over (
@@ -168,7 +168,7 @@ nearest_only as (
 
 deduplicated as (
 
-    -- 🔥 remove reverse duplicates (A-B vs B-A)
+    --  remove reverse duplicates (A-B vs B-A)
     select *
     from nearest_only
     where site_a < site_b

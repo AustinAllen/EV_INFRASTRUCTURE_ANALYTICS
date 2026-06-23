@@ -44,3 +44,11 @@ models:
       - name: tla_code
         tests:
           - not_null
+          
+
+  - name: int_chargers_by_tla_latest
+    description: "charger by tla in latest"
+    columns:
+      - name: tla_code
+        tests:
+          - not_null

@@ -25,7 +25,7 @@ select
     b.evs_per_connector,
     b.evs_per_station,
 
-    -- 🔥 geometry for map
+    --  geometry for map
     t.geometry
 
 from base b
